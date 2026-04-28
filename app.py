@@ -1,3 +1,4 @@
+from langchain_core.messages import HumanMessage
 import os
 import tempfile
 import hashlib
@@ -67,12 +68,12 @@ def get_llm(model: str, base_url: str, temperature: float):
 def call_ollama(prompt: str, model: str, base_url: str, temperature: float) -> str:
     llm = get_llm(model, base_url, temperature)
 
-    # safety: trim prompt if too long
+    # safety: trim prompt
     if len(prompt) > 4000:
         prompt = prompt[:4000]
 
     resp = llm.invoke([
-        {"role": "user", "content": prompt}
+        HumanMessage(content=prompt)
     ])
 
     return (resp.content or "").strip()
