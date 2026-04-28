@@ -57,27 +57,26 @@ def get_llm(model: str, base_url: str, temperature: float):
     try:
         api_key = st.secrets["GROQ_API_KEY"]
     except Exception:
-        st.error("⚠️ GROQ_API_KEY not found in secrets.toml")
+        st.error("⚠️ GROQ_API_KEY not found in Streamlit secrets")
         st.stop()
 
     return ChatGroq(
-        model_name="llama3-8b-8192",   # ✅ MUST be model_name (not model)
+        model_name="llama3-8b-8192",   # ✅ correct model
         temperature=temperature,
-        groq_api_key=api_key           # ✅ MUST be groq_api_key (not api_key)
+        groq_api_key=api_key           # ✅ correct key name
     )
-
+    
 def call_ollama(prompt: str, model: str, base_url: str, temperature: float) -> str:
     llm = get_llm(model, base_url, temperature)
 
-    # trim input (important)
-    prompt = prompt[:2000]
+    # STRICT trim (important)
+    prompt = prompt[:1500]
 
-    resp = llm.invoke([
-        HumanMessage(content=prompt)
-    ])
-
-    return (resp.content or "").strip()
-
+    try:
+        resp = llm.invoke([HumanMessage(content=prompt)])
+        return (resp.content or "").strip()
+    except Exception as e:
+        return f"Error: {str(e)}"
 
 ######## AI Agent Nodes #######################
 
