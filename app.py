@@ -14,7 +14,7 @@ import pymupdf4llm
 # Load environment variables from .env file
 load_dotenv()
 
-DEFAULT_MODEL = "llama3.2:1b"
+DEFAULT_MODEL = "llama3-8b-8192"
 # Retrieve OLLAMA_BASE_URL from environment, default to localhost
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 SUMMARY_TEMPERATURE = 0.2
@@ -67,8 +67,11 @@ def get_llm(model: str, base_url: str, temperature: float):
 def call_ollama(prompt: str, model: str, base_url: str, temperature: float) -> str:
     """Invoke LLM with prompt and return response content."""
     llm = get_llm(model, base_url, temperature)
-    resp = llm.invoke(prompt)
-    # Return stripped content of the response if available
+
+    resp = llm.invoke([
+        {"role": "user", "content": prompt}
+    ])
+
     return (resp.content or "").strip()
 
 
@@ -76,7 +79,7 @@ def call_ollama(prompt: str, model: str, base_url: str, temperature: float) -> s
 
 def summarize_node(state: AgentState) -> Dict[str, Any]:
     """Generate executive summary of legal document."""
-    text = state["original_text"][:3000]
+    text = state["original_text"][:1500]
     prompt = dedent(f"""
     You are an expert legal assistant.
     Produce a concise executive summary of this legal document (5–12 bullet points max).
@@ -97,7 +100,7 @@ def summarize_node(state: AgentState) -> Dict[str, Any]:
 
 def analyze_risks_node(state: AgentState) -> Dict[str, Any]:
     """Identify legal risks and liabilities in document."""
-    text = state["original_text"][:3000]
+    text = state["original_text"][:1500]
     prompt = dedent(f"""
     You are an expert legal assistant.
     Identify key legal risks and liabilities. For each item include:
@@ -120,7 +123,7 @@ def analyze_risks_node(state: AgentState) -> Dict[str, Any]:
 
 def suggest_improvements_node(state: AgentState) -> Dict[str, Any]:
     """Suggest improvements and missing protections for document."""
-    text = state["original_text"][:3000]
+    text = state["original_text"][:1500]
     prompt = dedent(f"""
     You are an expert legal assistant.
     Suggest improvements or missing protections. Prefer specific clause-level suggestions.
