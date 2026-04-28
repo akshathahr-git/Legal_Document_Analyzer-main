@@ -15,7 +15,7 @@ import pymupdf4llm
 # Load environment variables from .env file
 load_dotenv()
 
-DEFAULT_MODEL = "llama3.2:1b"
+DEFAULT_MODEL = "llama3-8b-8192"
 # Retrieve OLLAMA_BASE_URL from environment, default to localhost
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 SUMMARY_TEMPERATURE = 0.2
@@ -54,23 +54,23 @@ def file_hash(data: bytes) -> str:
 
 @st.cache_resource
 def get_llm(model: str, base_url: str, temperature: float):
-    api_key=st.secrets["GROQ_API_KEY"]
-
-    if not api_key:
-        raise ValueError("GROQ_API_KEY is missing. Add it in Streamlit Secrets.")
+    try:
+        api_key = st.secrets["GROQ_API_KEY"]
+    except Exception:
+        st.error("⚠️ GROQ_API_KEY not found in secrets.toml")
+        st.stop()
 
     return ChatGroq(
-        model="llama3-8b-8192",
+        model_name="llama3-8b-8192",   # ✅ MUST be model_name (not model)
         temperature=temperature,
-        api_key=api_key
+        groq_api_key=api_key           # ✅ MUST be groq_api_key (not api_key)
     )
 
 def call_ollama(prompt: str, model: str, base_url: str, temperature: float) -> str:
     llm = get_llm(model, base_url, temperature)
 
-    # safety: trim prompt
-    if len(prompt) > 4000:
-        prompt = prompt[:4000]
+    # trim input (important)
+    prompt = prompt[:2000]
 
     resp = llm.invoke([
         HumanMessage(content=prompt)
