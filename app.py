@@ -53,7 +53,7 @@ def file_hash(data: bytes) -> str:
 
 @st.cache_resource
 def get_llm(model: str, base_url: str, temperature: float):
-    api_key = os.getenv("GROQ_API_KEY")
+    api_key=st.secrets["GROQ_API_KEY"]
 
     if not api_key:
         raise ValueError("GROQ_API_KEY is missing. Add it in Streamlit Secrets.")
