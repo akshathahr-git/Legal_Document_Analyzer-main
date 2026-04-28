@@ -3,6 +3,7 @@ langchain
 langchain-ollama
 langchain-openai
 langchain-community
+langchain-groq
 langgraph
 python-dotenv
 openai
