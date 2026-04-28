@@ -6,7 +6,7 @@ from typing import TypedDict, Dict, Any
 
 import streamlit as st
 from dotenv import load_dotenv
-from langchain_ollama import ChatOllama
+from langchain_groq import ChatGroq
 from langgraph.graph import END, StateGraph
 import pymupdf4llm
 
@@ -51,15 +51,18 @@ def file_hash(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
-
 @st.cache_resource
 def get_llm(model: str, base_url: str, temperature: float):
-    return ChatOllama(
-        model=model,
-        base_url="http://localhost:11434",  # force correct URL
-        temperature=temperature
-    )
+    api_key = os.getenv("GROQ_API_KEY")
 
+    if not api_key:
+        raise ValueError("GROQ_API_KEY is missing. Add it in Streamlit Secrets.")
+
+    return ChatGroq(
+        model="llama3-8b-8192",
+        temperature=temperature,
+        api_key=api_key
+    )
 
 def call_ollama(prompt: str, model: str, base_url: str, temperature: float) -> str:
     """Invoke LLM with prompt and return response content."""
