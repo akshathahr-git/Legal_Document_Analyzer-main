@@ -14,7 +14,7 @@ import pymupdf4llm
 # Load environment variables from .env file
 load_dotenv()
 
-DEFAULT_MODEL = "llama3-8b-8192"
+DEFAULT_MODEL = "llama3.2:1b"
 # Retrieve OLLAMA_BASE_URL from environment, default to localhost
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 SUMMARY_TEMPERATURE = 0.2
@@ -65,8 +65,11 @@ def get_llm(model: str, base_url: str, temperature: float):
     )
 
 def call_ollama(prompt: str, model: str, base_url: str, temperature: float) -> str:
-    """Invoke LLM with prompt and return response content."""
     llm = get_llm(model, base_url, temperature)
+
+    # safety: trim prompt if too long
+    if len(prompt) > 4000:
+        prompt = prompt[:4000]
 
     resp = llm.invoke([
         {"role": "user", "content": prompt}
