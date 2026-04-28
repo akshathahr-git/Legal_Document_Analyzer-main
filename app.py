@@ -6,7 +6,7 @@ from typing import TypedDict, Dict, Any
 
 import streamlit as st
 from dotenv import load_dotenv
-from langchain_ollama import ChatOllama
+from langchain_openai import ChatOpenAI
 from langgraph.graph import END, StateGraph
 import pymupdf4llm
 
@@ -53,9 +53,12 @@ def file_hash(data: bytes) -> str:
 
 
 @st.cache_resource
-def get_llm(model: str, base_url: str, temperature: float) -> ChatOllama:
-    """Initialize and cache Ollama LLM instance."""
-    return ChatOllama(model=model, base_url=base_url, temperature=temperature)
+def get_llm(model: str, base_url: str, temperature: float):
+    return ChatOpenAI(
+        model="gpt-4o-mini",   # you can keep it fixed
+        temperature=temperature,
+        api_key="sk-your-key-here"
+    )
 
 
 def call_ollama(prompt: str, model: str, base_url: str, temperature: float) -> str:
