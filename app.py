@@ -6,7 +6,7 @@ from typing import TypedDict, Dict, Any
 
 import streamlit as st
 from dotenv import load_dotenv
-from langchain_openai import ChatOpenAI
+from langchain_ollama import ChatOllama
 from langgraph.graph import END, StateGraph
 import pymupdf4llm
 
@@ -54,10 +54,10 @@ def file_hash(data: bytes) -> str:
 
 @st.cache_resource
 def get_llm(model: str, base_url: str, temperature: float):
-    return ChatOpenAI(
-        model="gpt-4o-mini",   # you can keep it fixed
-        temperature=temperature,
-        api_key="sk-your-key-here"
+    return ChatOllama(
+        model=model,
+        base_url="http://localhost:11434",  # force correct URL
+        temperature=temperature
     )
 
 
