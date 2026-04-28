@@ -15,7 +15,7 @@ import pymupdf4llm
 # Load environment variables from .env file
 load_dotenv()
 
-DEFAULT_MODEL = "llama3-8b-8192"
+DEFAULT_MODEL = "llama-3.1-8b-instant"
 # Retrieve OLLAMA_BASE_URL from environment, default to localhost
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 SUMMARY_TEMPERATURE = 0.2
@@ -61,9 +61,9 @@ def get_llm(model: str, base_url: str, temperature: float):
         st.stop()
 
     return ChatGroq(
-        model_name="llama3-8b-8192",   # ✅ correct model
+        model_name="llama-3.1-8b-instant",  # ✅ updated model
         temperature=temperature,
-        groq_api_key=api_key           # ✅ correct key name
+        groq_api_key=api_key
     )
     
 def call_ollama(prompt: str, model: str, base_url: str, temperature: float) -> str:
