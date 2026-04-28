@@ -97,7 +97,7 @@ def summarize_node(state: AgentState) -> Dict[str, Any]:
 
 def analyze_risks_node(state: AgentState) -> Dict[str, Any]:
     """Identify legal risks and liabilities in document."""
-   text = state["original_text"][:3000]
+    text = state["original_text"][:3000]
     prompt = dedent(f"""
     You are an expert legal assistant.
     Identify key legal risks and liabilities. For each item include:
